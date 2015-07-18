@@ -1,0 +1,432 @@
+<?php/*项目详情页面*/?>
+<include file="Pub:header"/>
+
+
+<!--弹窗提示框 开始-->
+<div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">提示信息</h3>
+    </div>
+    <div class="modal-body">
+        <p class="error-text" id="dialogMessage">确认禁用该账户？</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" id="dialogCancelButton" onclick="dialogCancle()" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button  id="dialogEnsureButton" onclick="dialogEnsure()" class="btn btn-danger">确认</button>
+    </div>
+</div>
+<!--弹窗提示框 结束-->
+
+<div id="content">
+    <!--breadcrumbs-->
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="{:U('Index/index')}" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a>
+            <a>新闻管理</a>
+            <a href="" class="current">新闻列表</a>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="background: salmon;">
+        <div class="row-fluid" style="margin-top: 0px;">
+            <div style="float: right;">
+                <form action="{:U('News/newsComList')}" id="uploadForm"  class="form-horizontal" method="post">
+
+                    <div  class="controls" style=" margin-left: 0px;">
+
+                        <div class="input-append date form_datetime">
+                            <span class="add-on" style="width: 80px;"><i class="icon-hand-right">开始时间</i></span>
+                            <input id="starTime"  class="inputTime" name="startTime" title="开始时间"  size="16" type="text" value="{$startTime}">
+                            <span class="add-on"><i class="icon-remove"></i></span>
+                            <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+                        <div class="input-append date form_datetime">
+                            <span class="add-on" style="width: 80px;"><i class="icon-hand-right">截止时间</i></span>
+                            <input id="endTime" class="inputTime" name="endTime" title="截止时间"  size="16" type="text" value="{$endTime}">
+                            <span class="add-on"><i class="icon-remove"></i></span>
+                            <span class="add-on"><i class="icon-th"></i></span>
+                        </div>
+
+                        <input placeholder="请输入新闻标题"  id="serachKey" value="{$serachKey}" type="text" name="serachKey" />
+
+                        <button class="btn btn-primary"  value="" onclick="return checkInput()" >查询</button>
+
+                        <div class="control-group">
+                            <label class="control-label"></label>
+                            <div class="controls">
+                                <input id="next" class="btn btn-danger" type="submit" value="修改" />
+                            </div>
+                            <a href="#" id="dialog_link" class="ui-state-default ui-corner-all">
+                                <span class="ui-icon ui-icon-newwin"></span>Open Dialog
+                            </a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div id="divSpan4-1" class="span3">
+                <volist name="newsList" id="vo" key="k" mod="4">
+                    <eq name="mod" value="0">
+
+                        <div class="thumbnail" style="background: #ffffff;margin-bottom: 20px;">
+                            <img alt="300x200" src="{$vo.smallpic}" />
+                            <div class="caption">
+                                <h5>{$vo.title} </h5>
+                                <p><span class="badge">{$vo.time}</span></p>
+                                <span class="badge badge-warning"><li class=" icon-comments" style="margin-right: 5px;">&nbsp;&nbsp;{$vo.readedCount}</li></span>
+                                <p></p>
+                                <p>
+                                    <a class="btn btn-primary" target="newsDetailInfo{$vo.id}" href="{:U('News/newsDetailInfo',array('id'=>$vo['id']))}">详情</a>
+
+                                    <a class="btn" target="API{$vo.id}" href="{$serverUrl}news/GetDetailNewsInfoById?id={$vo.id}">查看接口</a>
+                                </p>
+                            </div>
+                        </div>
+
+                    </eq>
+                </volist>
+            </div>
+
+            <div id="divSpan4-2" class="span3">
+                <volist name="newsList" id="vo" key="k" mod="4">
+                    <eq name="mod" value="1">
+
+                        <div class="thumbnail" style="background: #ffffff;margin-bottom: 20px;">
+                            <img alt="300x200" src="{$vo.smallpic}" />
+                            <div class="caption">
+                                <h5>{$vo.title} </h5>
+                                <p><span class="badge">{$vo.time}</span></p>
+                                <span class="badge badge-warning"><li class=" icon-comments" style="margin-right: 5px;">&nbsp;&nbsp;{$vo.readedCount}</li></span>
+                                <p></p>
+                                <p>
+                                    <a class="btn btn-primary" target="newsDetailInfo{$vo.id}" href="{:U('News/newsDetailInfo',array('id'=>$vo['id']))}">详情</a>
+
+                                    <a class="btn" target="API{$vo.id}" href="{$serverUrl}news/GetDetailNewsInfoById?id={$vo.id}">查看接口</a>
+
+                                </p>
+                            </div>
+                        </div>
+
+                    </eq>
+                </volist>
+            </div>
+
+            <div id="divSpan4-3" class="span3">
+                <volist name="newsList" id="vo" key="k" mod="4">
+                    <eq name="mod" value="2">
+
+                        <div class="thumbnail" style="background: #ffffff;margin-bottom: 20px;">
+                            <img alt="300x200" src="{$vo.smallpic}" />
+                            <div class="caption">
+                                <h5>{$vo.title} </h5>
+                                <p><span class="badge">{$vo.time}</span></p>
+                                <span class="badge badge-warning"><li class=" icon-comments" style="margin-right: 5px;">&nbsp;&nbsp;{$vo.readedCount}</li></span>
+                                <p></p>
+                                <p>
+                                    <a class="btn btn-primary" target="newsDetailInfo{$vo.id}" href="{:U('News/newsDetailInfo',array('id'=>$vo['id']))}">详情</a>
+
+                                    <a class="btn" target="API{$vo.id}" href="{$serverUrl}news/GetDetailNewsInfoById?id={$vo.id}">查看接口</a>
+                                </p>
+                            </div>
+                        </div>
+
+                    </eq>
+                </volist>
+            </div>
+
+            <div id="divSpan4-4" class="span3">
+                <volist name="newsList" id="vo" key="k" mod="4">
+                    <eq name="mod" value="3">
+
+                        <div class="thumbnail" style="background: #ffffff;margin-bottom: 20px;">
+                            <img alt="300x200" src="{$vo.smallpic}" />
+                            <div class="caption">
+                                <h5>{$vo.title} </h5>
+                                <p><span class="badge">{$vo.time}</span></p>
+                                <span class="badge badge-warning"><li class=" icon-comments" style="margin-right: 5px;">&nbsp;&nbsp;{$vo.readedCount}</li></span>
+                                <p></p>
+                                <p>
+                                    <a class="btn btn-primary" target="newsDetailInfo{$vo.id}" href="{:U('News/newsDetailInfo',array('id'=>$vo['id']))}">详情</a>
+                                    <a class="btn" target="API{$vo.id}" href="{$serverUrl}news/GetDetailNewsInfoById?id={$vo.id}">查看接口</a>
+                                </p>
+                            </div>
+                        </div>
+
+                    </eq>
+                </volist>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div style="  text-align: center;" class="span12">
+                <span style="margin-right: 5px;">{$count}条记录</span><span id="pageState">{$page}</span>/{$pageNum}页
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div style="  text-align: center;" class="span12">
+                <input id="moreUserList"  style=" width: 15%;background: rgb(46, 54, 63);" onclick="moreNewsList()" class="btn btn-primary" type="button" value="显示更多" />
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ui-dialog -->
+    <div id="dialog_simple" title="Dialog Simple Title">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    <!--static dialog-->
+    <div id="dialog-message" title="Modal Dialog">
+        <p>
+            <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+            Your files have downloaded successfully into the My Downloads folder.
+        </p>
+        <p>
+            Currently using <b>36% of your storage space</b>.
+        </p>
+    </div>
+
+    <a href="#" id="sampleButton">Change</a>
+    <a href="#" id="sampleButton">Change</a>
+
+    <input id="page" style="visibility: hidden;" value="{$page}" />
+    <input id="serverUrl" style="visibility: hidden;" value="{$serverUrl}" />
+
+</div>
+
+
+
+<include file="Pub:footer"/>
+
+
+
+
+<script>
+
+    $('#sampleButton').on('click', function(event){
+        event.preventDefault();
+        $('#dialog_simple').dialog({
+            autoOpen: true,
+            modal: true,
+            width: 600,
+            buttons: {
+                "Save": function () {
+                    alert("wer");
+                    $(this).dialog("close");
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+
+    // Dialog Link
+    $('#dialog_link').click(function () {
+        $('#dialog_simple').dialog('open');
+        return false;
+    });
+
+    // Modal Link
+    $('#modal_link').click(function () {
+        $('#dialog-message').dialog('open');
+        return false;
+    });
+
+    // Dialog Simple
+    $('#dialog_simple').dialog({
+        autoOpen: false,
+        width: 600,
+        buttons: {
+            "Ok": function () {
+                $(this).dialog("close");
+            },
+            "Cancel": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    // Dialog message
+    $("#dialog-message").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            Ok: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>
+
+<script>
+
+    function showDialog(model,message){
+
+        if(model==1)//对话框模式1 只有确认按钮
+        {
+            $('#dialogCancelButton').css('display','none');
+            $('#dialogEnsureButton').css('background','blue');
+            $('#dialogMessage').html(message);
+
+            $('.modal').modal('show').on('shown',function(){
+            })
+        }
+        else if(model==2) //对话框模式2 带有 确认 和 取消 按钮
+        {
+            $('#myModal').modal('show')
+            $('#dialogCancelButton').show();
+            $('#dialogEnsureButton').css('background','blue');
+            $('#dialogMessage').html(message);
+
+            $('.modal').modal('show').on('shown',function(){
+            })
+        }
+    }
+
+    //对话框 点击 确认 后的操作
+    function dialogEnsure()
+    {
+        $('.modal').modal('hide')
+    }
+
+    //对话框 点击 取消 后的操作
+    function dialogCancle()
+    {
+        return false;
+    }
+
+    function checkInput(){
+
+        startTime=$("#starTime").val();
+        endTime=$("#endTime").val();
+
+        if(startTime==''||endTime=='')
+        {
+            showDialog(1,'时间不能为空！');
+            return false;
+        }else
+        {
+            startTime=new Date(Date.parse(startTime));
+            endTime=new Date(Date.parse(endTime));
+
+            if(startTime.getTime()>endTime.getTime())
+            {
+                showDialog(1,'开始时间早于了截止时间！');
+                return false;
+            }
+        }
+    }
+
+    function load()
+    {
+        //设置 标段名称 提示文字
+        $( ".tooltip" ).tooltip();
+
+        $('.textarea_editor').wysihtml5();
+    }
+
+    //设置时间选择器的属性
+    $(".form_datetime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        language:"zh-CN",
+        todayBtn:"linked"
+    });
+
+    //格式化时间
+    $('.inputTime').onpropertychange(
+            str=$('#starTime').val(),
+            str=str.replace('+',' '),
+            $('#starTime').val(str),
+            str=$('#endTime').val(),
+            str=str.replace('+',' '),
+            $('#endTime').val(str)
+    )
+
+
+    //更多新闻
+    function moreNewsList()
+    {
+        var page=$('#page').val();
+        page++;
+        var serachKey=$('#serachKey').val();
+        var startTime=$('#starTime').val();
+        var endTime =$('#endTime').val();
+        var serverUrl=$('#serverUrl').val();
+
+        $.ajax({
+            url:'{:U("moreNewsList")}',
+            type:'post',
+            data:{page:page,serachKey:serachKey,startTime:startTime,endTime:endTime},
+            success:function(e){
+
+                var resulyArr=eval('('+e+')');
+
+                if(resulyArr['newsList']==null)
+                {
+                    showDialog(1,'没有更多啦！');
+                    $('#moreUserList').fadeOut();
+                    return false;
+                }
+                else
+                {
+                    $('#page').val(resulyArr['page']);
+
+                    $('#pageState').html(page);
+                    for(i=0;i<resulyArr['newsList'].length;i++)
+                    {
+
+                        var newsInfo= '<div class="thumbnail" style="background: #ffffff;margin-bottom: 20px;">'
+                                        +'<img alt="300x200" src="'+resulyArr['newsList'][i]['smallpic']+'" />'
+                                        +'<div class="caption">'
+                                            +'<h5>'+resulyArr['newsList'][i]["title"]+'</h5>'
+                                            +'<p><span class="badge">'+resulyArr['newsList'][i]['time']+'</span></p>'
+                                            +'<span class="badge badge-warning"><li class=" icon-comments" style="margin-right: 5px;">&nbsp;&nbsp;'+resulyArr['newsList'][i]["readedCount"]+'</li></span>'
+                                            +'<p></p>'
+                                            +'<p>'
+                                                +'<a class="btn btn-primary" target="newsDetailInfo'+resulyArr['newsList'][i]['id']+'" href="newsDetailInfo?id='+resulyArr['newsList'][i]['id']+'">详情</a>'
+
+                                                +'<a class="btn" target="API'+resulyArr['newsList'][i]['id']+'" href="'+serverUrl+'news/GetDetailNewsInfoById?id='+resulyArr['newsList'][i]['id']+'">查看接口</a>'
+
+                                            +'</p>'
+                                        +'</div>'
+                                    +'</div>';
+
+                        switch(i%4)
+                        {
+                            case 0:
+                                $('#divSpan4-1').append(newsInfo);
+                                break;
+                            case 1:
+                                $('#divSpan4-2').append(newsInfo);
+                                break;
+                            case 2:
+                                $('#divSpan4-3').append(newsInfo);
+                                break;
+                            case 3:
+                                $('#divSpan4-4').append(newsInfo);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+</script>
