@@ -1,0 +1,383 @@
+<?php/*项目详情页面*/?>
+<include file="Pub:header"/>
+
+<!--弹窗提示框 开始-->
+<div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">提示信息</h3>
+    </div>
+    <div class="modal-body">
+        <p class="error-text" id="dialogMessage">确认禁用该账户？</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" id="dialogCancelButton" onclick="dialogCancle()" data-dismiss="modal" aria-hidden="true">取消</button>
+        <button  id="dialogEnsureButton" onclick="dialogEnsure()" class="btn btn-danger">确认</button>
+    </div>
+</div>
+<!--弹窗提示框 结束-->
+
+
+<div id="content">
+    <!--breadcrumbs-->
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="{:U('Index/index')}" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a>
+            <a>用户管理</a>
+            <a href="" class="current">用户列表</a>
+        </div>
+    </div>
+
+
+    <div class="container-fluid" style="background: salmon;">
+        <div class="row-fluid" style="margin-top: 0px;">
+            <div style="float: right;">
+                <form action="{:U('User/userList')}"  class="form-horizontal" method="post">
+
+                    <div  class="controls">
+                        <select id="selectedItem" name="select" style="width:150px;margin-right: 10px;"  >
+                            <volist name="selectList" id="vo" key="k">
+                                <option <if condition="$k eq $selectedItem">selected</if>  value="{$vo.value}">{$vo.name}</option>
+                            </volist>
+                        </select>
+                        <input placeholder="请输入用户昵称或账号"  id="serachKey" value="{$serachKey}" type="text" name="serachKey" />
+                        <input class="btn btn-primary" type="submit" value="查询" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <div id="divSpan6-1" class="span6">
+                <volist name="userList" id="vo" key="k" mod="2">
+                    <eq name="mod" value="0">
+                        <div class="widget-box">
+                            <div class="widget-title bg_ly" data-toggle="collapse" href="#collapseG{$vo.id}"><span class="icon"><i class="icon-chevron-down"></i></span>
+                                <h5><li class="icon-user" style="margin-right: 10px;"></li>{$vo.nickname}</h5>
+                            </div>
+                            <div class="widget-content nopadding in collapse" id="collapseG{$vo.id}" style="height: auto;">
+                                <ul class="recent-posts">
+                                    <li>
+                                        <div class="user-thumb "  style="height: 80px;width: 80px;">
+                                            <ul class="thumbnails"  style="width: 100%;height: 100%;">
+                                                <li  style="height: 100%; padding:0px;" class="span12">
+                                                    <a >
+                                                        <img  style="width: 100%;height: 100%;" src="{$headIcoUrl}{$vo.headIco}"  >
+                                                    </a>
+                                                    <div  title="用户详情" class="actions section"  style="left: 60%;">
+                                                        <a  target="_blank"  href="{:U('User/detailUserInfo',array('id'=>$vo['id']))}">
+                                                            <i class="icon-search" ></i>
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="article-post">
+                            <span class="user-info">
+                                <span style="color: salmon;"> <strong>账号:</strong> </span>
+                                <a href="" style="">{$vo.name}</a>
+                            </span>
+                                            <p>
+                                                <span style="color: salmon;"> <strong>签名:</strong> </span>
+                                            </p>
+                                            <p>
+                                                <a href="#">&nbsp;&nbsp;{$vo.personalNote}</a>
+                                            </p>
+                                        </div>
+                                    </li>
+
+                                    <if condition="$vo.dataState eq 0">
+                                        <button id="stateBtn{$vo.id}"  style="float: right;"  class="btn btn-primary "><li id="stateLi{$vo.id}" class="icon-unlock" ><span onclick="unlockUser({$vo.id})" id="stateSpan{$vo.id}" style="margin-left: 10px;">解锁该账户</span></button>
+                                        <else/>
+                                        <button  id="stateBtn{$vo.id}" style="float: right;"  class="btn btn-danger "><li id="stateLi{$vo.id}" class="icon-lock" ><span onclick="lockUser({$vo.id})" id="stateSpan{$vo.id}"  style="margin-left: 10px;">禁止该账户</span></button>
+                                    </if>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </eq>
+                </volist>
+            </div>
+
+            <div id="divSpan6-2" class="span6">
+                <volist name="userList" id="vo" key="k" mod="2">
+                    <eq name="mod" value="1">
+                        <div class="widget-box">
+                            <div class="widget-title bg_ly" data-toggle="collapse" href="#collapseG{$vo.id}"><span class="icon"><i class="icon-chevron-down"></i></span>
+                                <h5><li class="icon-user" style="margin-right: 10px;"></li>{$vo.nickname}</h5>
+                            </div>
+                            <div class="widget-content nopadding in collapse" id="collapseG{$vo.id}" style="height: auto;">
+                                <ul class="recent-posts">
+                                    <li>
+                                        <div class="user-thumb "  style="height: 80px;width: 80px;">
+                                            <ul class="thumbnails"  style="width: 100%;height: 100%;">
+                                                <li  style="height: 100%; padding:0px;" class="span12">
+                                                    <a >
+                                                        <img  style="width: 100%;height: 100%;" src="{$headIcoUrl}{$vo.headIco}"  >
+                                                    </a>
+                                                    <div  title="用户详情" class="actions section"  style="left: 60%;">
+                                                        <a target="_blank" href="{:U('User/detailUserInfo',array('id'=>$vo['id']))}">
+                                                            <i class="icon-search" ></i>
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="article-post">
+                                    <span class="user-info">
+                                        <span style="color: salmon;"> <strong>账号:</strong> </span>
+                                        <a href="" style="">{$vo.name}</a>
+                                    </span>
+                                            <p>
+                                                <span style="color: salmon;"> <strong>签名:</strong> </span>
+                                            </p>
+                                            <p>
+                                                <a href="#">&nbsp;&nbsp;{$vo.personalNote}</a>
+                                            </p>
+                                        </div>
+                                    </li>
+
+                                    <if condition="$vo.dataState eq 0">
+                                        <button id="stateBtn{$vo.id}"  style="float: right;"  class="btn btn-primary "><li id="stateLi{$vo.id}" class="icon-unlock" ><span onclick="unlockUser({$vo.id})" id="stateSpan{$vo.id}" style="margin-left: 10px;">解锁该账户</span></button>
+                                        <else/>
+                                        <button  id="stateBtn{$vo.id}" style="float: right;"  class="btn btn-danger "><li id="stateLi{$vo.id}" class="icon-lock" ><span onclick="lockUser({$vo.id})" id="stateSpan{$vo.id}"  style="margin-left: 10px;">禁止该账户</span></button>
+                                    </if>
+
+                                </ul>
+
+                            </div>
+                        </div>
+                    </eq>
+                </volist>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div style="  text-align: center;" class="span12">
+                <input id="moreUserList"  style=" width: 15%;background: rgb(46, 54, 63);" onclick="moreUserList()" class="btn btn-primary" type="button" value="显示更多" />
+            </div>
+        </div>
+    </div>
+
+    <input id="headIcoUrl" style="visibility: hidden;" value="{$headIcoUrl}" />
+
+</div>
+
+
+<include file="Pub:footer"/>
+<script>
+
+function showDialog(model,message){
+
+    if(model==1)//对话框模式1 只有确认按钮
+    {
+        $('#dialogCancelButton').css('display','none');
+        $('#dialogEnsureButton').css('background','blue');
+        $('#dialogMessage').html(message);
+
+        $('.modal').modal('show').on('shown',function(){
+        })
+    }
+    else if(model==2) //对话框模式2 带有 确认 和 取消 按钮
+    {
+        $('#myModal').modal('show')
+        $('#dialogCancelButton').show();
+        $('#dialogEnsureButton').css('background','blue');
+        $('#dialogMessage').html(message);
+
+        $('.modal').modal('show').on('shown',function(){
+        })
+    }
+}
+
+//禁止或解锁用户的flag
+//0 为禁止 1为解锁
+isLockOrUnLock=1;
+
+//用户id号
+userId=0;
+
+//对话框 点击 确认 后的操作
+function dialogEnsure()
+{
+    $('.modal').modal('hide');
+    if(isLockOrUnLock==0)
+    {
+        $.ajax({
+            url:'{:U("lockUser")}',
+            type:'post',
+            data:'id='+userId,
+            success:function(e){
+
+                if(e==1){
+
+                    var span=document.getElementById("stateSpan"+userId);
+                    span.innerHTML="解锁该账户";
+                    span.onclick=function(){unlockUser(userId)};
+
+                    var li=document.getElementById("stateLi"+userId);
+                    li.className='icon-unlock';
+
+                    var button=document.getElementById("stateBtn"+userId);
+                    button.className="btn btn-primary";
+
+                }else{
+                    return false;
+                }
+            }
+        });
+    }else
+    {
+        $.ajax({
+            url:'{:U("unlockUser")}',
+            type:'post',
+            data:'id='+userId,
+            success:function(e){
+
+                if(e==1){
+
+                    var span=document.getElementById("stateSpan"+userId);
+                    span.innerHTML="禁止该账户";
+                    span.onclick=function(){lockUser(userId)};
+
+                    var li=document.getElementById("stateLi"+userId);
+                    li.className='icon-lock';
+
+                    var button=document.getElementById("stateBtn"+userId);
+                    button.className="btn btn-danger";
+
+                }else{
+                    return false;
+                }
+            }
+        });
+    }
+}
+
+//对话框 点击 取消 后的操作
+function dialogCancle()
+{
+
+}
+
+//禁止用户
+function lockUser(id)
+{
+    showDialog(2,'确认禁止该账户?');
+    isLockOrUnLock=0;
+    userId=id;
+}
+
+//解锁用户
+function unlockUser(id)
+{
+    showDialog(2,'确认解锁该账户?');
+    isLockOrUnLock=1;
+    userId=id;
+}
+
+page=1;
+function moreUserList()
+{
+    page++;
+    headIcoUrl=$('#headIcoUrl').val();
+    selectedItem=$('#selectedItem').val();
+    serachKey=$('#serachKey').val();
+
+    $.ajax({
+        url:'{:U("moreUserList")}',
+        type:'post',
+        data:{page:page,select:selectedItem,serachKey:serachKey},
+        success:function(e){
+
+            var resulyArr=eval('('+e+')');
+
+            if(resulyArr==null)
+            {
+                showDialog(1,'没有更多啦！');
+                $('#moreUserList').fadeOut();
+                return false;
+            }
+
+            for(i=0;i<resulyArr.length;i++)
+            {
+                var userInfo='<div class="widget-box">'+
+                        '<div class="widget-title bg_ly" data-toggle="collapse" href="#collapseG'+resulyArr[i]["id"]+'" ><span class="icon"><i class="icon-chevron-down"></i></span>'+
+                        '<h5><li class="icon-user" style="margin-right: 10px;"></li>'+resulyArr[i]['nickname']+'</h5>'+
+                        '</div>'+
+                        '<div class="widget-content nopadding in collapse" id="collapseG'+resulyArr[i]["id"]+'" style="height: auto;">'+
+                        '<ul class="recent-posts">'+
+                        '<li>'+
+                        '<div class="user-thumb "  style="height: 80px;width: 80px;">'+
+                        '<ul class="thumbnails"  style="width: 100%;height: 100%;">'+
+                        '<li  style="height: 100%; padding:0px;" class="span12">'+
+                        '<a >'+
+                        '<img  style="width: 100%;height: 100%;" src="'+headIcoUrl+resulyArr[i]['headIco']+'" >'+
+                        '</a>'+
+                        '<div  title="用户详情" class="actions section"  style="left: 60%;">'+
+                        '<a   target="_blank"  href="detailUserInfo/id/'+resulyArr[i]['id']+'">'+
+                        '<i class="icon-search" ></i>'+
+                        '</a>'+
+                        '</div>'+
+                        '</li>'+
+                        '</ul>'+
+                        '</div>'+
+
+                        '<div class="article-post">'+
+                        '<span class="user-info">'+
+                        '<span style="color: salmon;"> <strong>账号:</strong> </span>'+
+                        '<a href="" style="">'+resulyArr[i]['name']+'</a>'+
+                        '</span>'+
+                        '<p>'+
+                        '<span style="color: salmon;"> <strong>签名:</strong> </span>'+
+                        '</p>'+
+                        '<p>'+
+                        '<a href="#">&nbsp;&nbsp;'+resulyArr[i]['personalNote']+'</a>'+
+                        '</p>'+
+                        '</div>'+
+                        '</li>';
+
+                if(resulyArr[i]['dataState']==0)
+                {
+                    userInfo+='<button id="stateBtn'+resulyArr[i]['id']+'"  style="float: right;"  class="btn btn-primary "><li id="stateLi'+resulyArr[i]['id']+'" class="icon-unlock" ><span onclick="unlockUser('+resulyArr[i]['id']+')" id="stateSpan'+resulyArr[i]['id']+'" style="margin-left: 10px;">解锁该账户</span></button>';
+
+//                    userInfo+= '<button id="stateBtn'+resulyArr[i]['id']+'"  style="float: right;"  class="btn btn-primary "><li id="stateLi'+resulyArr[i]['id']+'" class="icon-unlock" ><span onclick="unlockUser('+resulyArr[i]['id']+')" id="stateSpan'+resulyArr[i]['id']+'" style="margin-left: 10px;">解锁该账户</span></button>';
+
+                }else
+                {
+                    userInfo+= '<button id="stateBtn'+resulyArr[i]['id']+'"  style="float: right;"  class="btn btn-danger "><li id="stateLi'+resulyArr[i]['id']+'" class="icon-lock" ><span onclick="lockUser('+resulyArr[i]['id']+')" id="stateSpan'+resulyArr[i]['id']+'" style="margin-left: 10px;">禁止该账户</span></button>';
+                }
+
+                userInfo+='</ul> </div> </div>';
+
+                if((i%2)==0)
+                {
+                    $('#divSpan6-1').append(userInfo);
+                }
+                else
+                {
+                    $('#divSpan6-2').append(userInfo);
+                }
+            }
+        }
+    });
+}
+
+function load()
+{
+    //设置 标段名称 提示文字
+    $( ".section" ).tooltip();
+}
+
+
+
+</script>
